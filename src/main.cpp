@@ -3,31 +3,47 @@
 #include <chrono>
 #include "network.hpp"
 #include "miner.hpp"
+#include "config.hpp"
 
 int main() {
     std::cout << "AI-Monero-Miner-XMRig starting up..." << std::endl;
+
+    Config config;
+    if (config.load("config.json")) {
+        std::cout << "Configuration loaded from config.json" << std::endl;
+    } else {
+        std::cout << "Using default configuration." << std::endl;
+    }
 
     if (!Network::init()) {
         std::cerr << "Failed to initialize network" << std::endl;
         return 1;
     }
 
-    std::cout << "Network initialized." << std::endl;
+    std::cout << "Network initialized. Connecting to " << config.pool_url << ":" << config.pool_port << std::endl;
 
-    // Use placeholder wallet for demonstration
-    std::string wallet = "486vXn1T68pM7D6D8v...example_wallet_address...";
-    Miner miner("pool.supportxmr.com", 3333, wallet);
+    Miner miner(config.pool_url, config.pool_port, config.pool_user);
 
-    // Add 4 workers (placeholder count)
-    miner.addCpuWorker(4);
+    if (config.cpu_enabled) {
+        std::cout << "Enabling CPU mining with " << config.cpu_threads << " threads." << std::endl;
+        miner.addCpuWorker(config.cpu_threads);
+    }
 
-    // Start mining
+    if (config.gpu_enabled) {
+        std::cout << "Enabling GPU mining on platform " << config.gpu_platform << "." << std::endl;
+        miner.addGpuWorker(1, config.gpu_platform);
+    }
+
     miner.start();
 
-    // Loop to show status updates every 10 seconds
-    for (int i = 0; i < 6; ++i) { // 1 minute total
+    // Main execution loop
+    for (int i = 0; i < 6; ++i) { // 1 minute
         std::this_thread::sleep_for(std::chrono::seconds(10));
-        std::cout << "Total hashes: " << miner.getTotalHashes() << std::endl;
+        std::cout << "Hashrate: " << miner.getTotalHashes() / 10.0 << " H/s (simulated)" << std::endl;
+
+        if (config.ai_enabled) {
+            miner.optimize();
+        }
     }
 
     miner.stop();

@@ -1,0 +1,22 @@
+{
+    "pool": {
+        "url": "pool.supportxmr.com",
+        "port": 3333,
+        "user": "486vXn1T68pM7D6D8v...example_wallet_address...",
+        "pass": "x"
+    },
+    "ai": {
+        "enabled": true,
+        "optimization_interval": 60,
+        "max_threads": 32,
+        "min_threads": 1
+    },
+    "cpu": {
+        "enabled": true,
+        "threads": 4
+    },
+    "gpu": {
+        "enabled": false,
+        "platform": "OpenCL"
+    }
+}

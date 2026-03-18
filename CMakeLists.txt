@@ -16,6 +16,7 @@ set(SOURCES
     src/randomx/randomx_vm.cpp
     src/ai_optimizer.cpp
     src/gpu/gpu_worker.cpp
+    src/config.cpp
 )
 
 # Header directories
